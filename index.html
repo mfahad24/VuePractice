@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title></title>
   <meta charset="utf-8">
@@ -9,29 +10,74 @@
 </head>
 
 <body>
-  <div id ="shopping-list">
-    <h1> {{ header }}</h1>
-    <input v-model="newItem" type="text" placeholder="Add an item">
-    <button class="btn btn-primary" v-on:click="items.push(newItem);">Save Item</button>
+  <div id="shopping-list">
+    <div class="header">
+      <h1> {{ header }}</h1>
+      <button v-if="state === 'default'" class="btn btn-primary" @click="changeState('edit')">Add Item</button>
+      <button v-else class="btn btn-cancel" @click="changeState('default')">Cancel</button>
+    </div>
+    <div>
+      <input v-model="newItem" type="text" placeholder="Add an item" @keyup.enter="saveItem">
+      <button class="btn btn-primary" @click="saveItem;">Save Item</button>
+        <button class="btn btn-primary" @click="removeItem;">Remove Item</button>
+    </div>
     <ul>
       <li v-for="item in items"> {{item}}</li>
-      </ul>
-    </div>
+    </ul>
+    <p v-if="items.length === 0">Nice job! You bought all of your items!</p>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
   <script>
-    var shoppingList = new Vue ({
+    var shoppingList = new Vue({
       el: '#shopping-list',
       data: {
+        state: 'edit',
         header: 'Shopping List App',
-        newItem:'',
+        newItem: '',
         items: [
           '10 party hats',
           '2 board games',
           '20 cups'
         ]
+      },
+      methods: {
+        saveItem: function() {
+          this.items.push(this.newItem);
+          this.newItem = '';
+        },
+        changeState: function(newState) {
+          this.state = newState;
+          this.newItem = '';
+        },
+        removeItem: function() {
+          console.log("Hello");
+          this.items.splice(-1,1);
+        }
       }
     })
-    </script>
+  </script>
+  <style>
+  body {
+    background-color: lightblue;
+  }
+  #shopping-list {
+    background-color: white;
+    border: 1px solid black;
+    width: 400px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  ul {
+    list-style-type: none;
+    align:
+  }
+
+  input, button {
+    margin: 10px;
+  }
+  </style>
+
 </body>
 
 </html>
