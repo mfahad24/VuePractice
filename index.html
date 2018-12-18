@@ -17,11 +17,11 @@
       <button v-else class="btn btn-cancel" @click="changeState('default')">Cancel</button>
     </div>
     <div v-if="state === 'edit'" class="add-item-form">
-      <input v-model="newItem" type="text" placeholder="Add an item" @keyup.enter="saveItem">
+      <input class="add-item-input" v-model="newItem" type="text" placeholder="Add an item" @keyup.enter="saveItem">
       <button class="btn btn-primary" :disabled="newItem.length ===0" @click="saveItem">Save Item</button>
     </div>
     <ul>
-      <li v-for="item in items" :class="{strikeout: item.purchased}">{{ item.label }}</li>
+      <li v-for="item in reversedItems" :class="{strikeout: item.purchased, priority: item.highPriority}" @click="togglePurchased(item)">{{ item.label }}</li>
     </ul>
     <p v-if="items.length===0">Nice job! You've bough all your items!</p>
   </div>
@@ -37,34 +37,45 @@
           {
             label: '10 party hats',
             purchased: false,
+            highPriority: false,
           },
           {
             label: '2 board games',
             purchased: true,
+            highPriority: false,
           },
           {
             label: '20 cups',
             purchased: false,
+            highPriority: true,
           },
         ]
       },
+      // IMPORTANT !!! computed property - changes how it LOOKS, methods - changes the data itself
+      computed: {
+        reversedItems() {
+          return this.items.slice(0).reverse();
+        }
+      },
       methods: {
         saveItem: function() {
-          this.items.push({label: this.newItem, purchased: false},);
+          this.items.push({label: this.newItem, purchased: false,},);
           this.newItem = '';
         },
         changeState: function(newState) {
           this.state = newState;
           this.newItem = '';
-        }
+        },
+        togglePurchased: function (item) {
+          item.purchased = !item.purchased;
+        },
       }
     });
   </script>
   <style>
     body {
-      background-color: lightblue;
-      font-family: Cambria;
-      font-weight: bold;
+      background-color: #ECFEFD;
+      font-family: Impact;
     }
 
     h1 {
@@ -73,11 +84,13 @@
 
     #shopping-list {
       background-color: white;
-      border: 1px solid black;
+      border: none;
       width: 400px;
-      margin: auto;
       padding: 20px;
       border-radius: 10px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      margin: 0 auto;
+
     }
 
     input {
@@ -85,8 +98,11 @@
     }
 
     ul {
-      list-style-type: none;
-      align:
+      list-style-type: square;
+      margin-top: 25px;
+      margin-left:100px;
+      font-size: 20px;
+      cursor: pointer;
     }
 
     input,
@@ -96,6 +112,31 @@
 
     .add-item-btn {
       background-color: lightblue !important;
+      display: flex;
+      margin: auto;
+    }
+
+    .strikeout {
+      text-decoration: line-through;
+    }
+
+    .btn-cancel {
+      display: flex;
+      justify-content: flex-end;
+      margin: auto;
+    }
+
+    .add-item-input {
+      border-radius: 7px;
+      border: 1px solid grey;
+    }
+
+    .priority {
+      color: red;
+    }
+
+    .btn-primary {
+
     }
   </style>
 
